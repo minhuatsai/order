@@ -1,0 +1,4 @@
+{
+  "editor.formatOnSave": true, // 存檔時自動 format
+  "editor.defaultFormatter": "esbenp.prettier-vscode" // 預設 format 使用 prettier
+}

@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import CustomList from "./component/custom-list";
-import logo from "./logo.svg";
 import "./App.scss";
+
 const apiData = {
   orders: [
     {
@@ -44,51 +45,21 @@ const apiData = {
 };
 
 function App() {
-  const classification = {
-    pending: {
-      title: "進行中",
-      listData: [],
-      displayDate: true
-    },
-    complete: {
-      title: "已完成",
-      listData: [],
-      imgGray: true
-    }
-  };
-
-  if (Array.isArray(apiData.orders)) {
-    apiData.orders.forEach((item) => {
-      const statusCode = item.status.code;
-      if (statusCode === 1 || statusCode === 2) {
-        classification.pending.listData.push(item);
-      } else if (statusCode === 3 || statusCode === 4) {
-        classification.complete.listData.push(item);
-      }
+  const order = useSelector((state) => state);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch({
+      type: "CLASSIFY",
+      payload: { apiData }
     });
-  }
-
-  //排序處理
-  const sortHandle = (data, sortCondition) => {
-    const getTimestamp = (date) => {
-      const dateSplit = date.split("/");
-      dateSplit[0] = 1911 + parseInt(dateSplit[0]);
-      return new Date(dateSplit.join("/")).getTime();
-    };
-    data.sort((a, b) => {
-      const timestampA = getTimestamp(a.date);
-      const timestampB = getTimestamp(b.date);
-      if (sortCondition === "desc") {
-        return timestampB - timestampA;
-      }
-      return timestampA - timestampB;
+    dispatch({
+      type: "SORT_DESC"
     });
-  };
-  sortHandle(classification.pending.listData, "desc");
+  }, []);
 
   return (
     <div className="App">
-      <CustomList datas={classification} />
+      <CustomList datas={order} />
     </div>
   );
 }
